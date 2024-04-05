@@ -6,6 +6,7 @@ import { messageArrayValidator } from "@/lib/validations/message";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import Messages from "@/components/Messages";
+import ChatInput from "@/components/ChatInput";
 
 interface ChatIdProps {
   params: {
@@ -18,7 +19,7 @@ async function getChatMessages(chatId: string) {
     const results: string[] = await fetchRedis('zrange', `chat:${chatId}:messages`, 0, -1);
 
     const dbMessages = results.map((message) => JSON.parse(message) as Message);
-    const reversedMessages = dbMessages.reverse();
+    const reversedMessages = dbMessages.slice().reverse();
 
     const messages = messageArrayValidator.parse(reversedMessages);
 
@@ -68,6 +69,7 @@ const ChatId: React.FC<ChatIdProps> = async ({ params }: ChatIdProps) => {
       </div>
 
       <Messages initialMessages={initialMessages} sessionId={session.user.id} />
+      <ChatInput chatPartner={chatPartner} chatId={chatId} />
     </div>
   );
 }

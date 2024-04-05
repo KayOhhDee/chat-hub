@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { Message } from "@/lib/validations/message";
 import { useRef, useState } from "react";
@@ -19,7 +21,7 @@ const Messages: React.FC<MessagesProps> = ({ initialMessages, sessionId }) => {
         messages.map((message, index) => {
           const isCurrentUser = message.senderId === sessionId;
 
-          const hasNextMessageFromSameUser = messages[index - 1]?.senderId === message[index].senderId;
+          const hasNextMessageFromSameUser = messages[index - 1]?.senderId === messages[index]?.senderId;
 
           return (
             <div className="chat-message" key={message.timestamp}>
