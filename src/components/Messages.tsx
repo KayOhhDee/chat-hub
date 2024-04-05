@@ -3,15 +3,24 @@
 import { cn } from "@/lib/utils";
 import { Message } from "@/lib/validations/message";
 import { useRef, useState } from "react";
+import { format } from "date-fns";
+import Image from "next/image";
+import { User } from "next-auth";
 
 interface MessagesProps {
   initialMessages: Message[];
   sessionId: string;
+  sessionImg: string | null | undefined;
+  chatPartner: User;
 }
  
-const Messages: React.FC<MessagesProps> = ({ initialMessages, sessionId }) => {
+const Messages: React.FC<MessagesProps> = ({ initialMessages, sessionId, sessionImg, chatPartner }) => {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const scrollDownRef = useRef<HTMLDivElement | null>(null);
+
+  const formatTimestamp = (timestamp: number) => {
+    return format(timestamp, "HH:mm");
+  }
 
   return ( 
     <div id="messages" className="flex h-full flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
@@ -40,9 +49,22 @@ const Messages: React.FC<MessagesProps> = ({ initialMessages, sessionId }) => {
                   })}>
                     {message.text}{" "}
                     <span className="ml-2 text-xs text-gray-400">
-                      { message.timestamp }
+                      { formatTimestamp(message.timestamp) }
                     </span>
                   </span>
+                </div>
+                <div className={cn('relative w-6 h-6', {
+                  'order-2': isCurrentUser,
+                  'order-1': !isCurrentUser,
+                  'invisible': hasNextMessageFromSameUser,
+                })}>
+                  <Image 
+                    fill 
+                    referrerPolicy="no-referrer"
+                    src={isCurrentUser ? sessionImg ?? '' : chatPartner.image ?? ''}
+                    alt={isCurrentUser ? "Your profile picture" : `${chatPartner.name} profile picture`}
+                    className="rounded-full"
+                  />
                 </div>
               </div>
             </div>

@@ -68,7 +68,7 @@ const ChatId: React.FC<ChatIdProps> = async ({ params }: ChatIdProps) => {
         </div>
       </div>
 
-      <Messages initialMessages={initialMessages} sessionId={session.user.id} />
+      <Messages initialMessages={initialMessages} sessionId={session.user.id} chatPartner={chatPartner} sessionImg={session.user.image} />
       <ChatInput chatPartner={chatPartner} chatId={chatId} />
     </div>
   );
